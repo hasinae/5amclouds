@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Info — 5amclouds</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="info-body">
+  <header class="chrome-header">
+    <span class="brand-mark">5AMCLOUDS</span>
+    <a href="index.html" class="info-link">Back</a>
+  </header>
+
+  <main class="info-main">
+    <div class="info-left">
+      <p class="info-label">About &mdash; Photography</p>
+      <h1 class="info-headline">Photographs made in the hour<br />before the world wakes up.</h1>
+      <p class="info-body-text">
+        This is a placeholder bio &mdash; edit <code>info.html</code> to add your own words here.
+      </p>
+    </div>
+
+    <div class="info-right">
+      <p class="info-label">Contact</p>
+      <div class="info-contact-row">
+        <span class="info-contact-label">Name</span>
+        <span class="info-contact-value">hasina</span>
+      </div>
+      <div class="info-contact-row">
+        <span class="info-contact-label">Instagram</span>
+        <a class="info-contact-value info-contact-link" href="https://instagram.com/555amclouds" target="_blank" rel="noopener">@555amclouds</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="chrome-footer info-footer">
+    <p>&copy; <span id="year"></span> 5amclouds</p>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

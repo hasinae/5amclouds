@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>5amclouds — Photography</title>
+<meta name="description" content="5amclouds photography portfolio" />
+<link rel="stylesheet" href="css/style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader" class="loader">
+    <pre id="ascii-text" class="ascii-text" aria-hidden="true"></pre>
+    <div class="loader-bottom">
+      <div class="loader-bar"><div id="loader-bar-fill" class="loader-bar-fill"></div></div>
+      <div id="loader-percent" class="loader-percent">0%</div>
+    </div>
+  </div>
+
+  <!-- Main Site -->
+  <div id="site" class="site">
+    <header class="chrome-header">
+      <span class="brand-mark">5AMCLOUDS</span>
+      <a href="info.html" class="info-link">Info</a>
+    </header>
+
+    <canvas id="scene-canvas"></canvas>
+
+    <footer class="chrome-footer">
+      <p>&copy; <span id="year"></span> 5amclouds</p>
+    </footer>
+  </div>
+
+  <!-- Detail Panel -->
+  <div id="detail" class="detail">
+    <div class="detail-scrim"></div>
+    <button id="detailClose" class="detail-close" aria-label="Close">&times;</button>
+    <div class="detail-panel">
+      <p class="detail-category" id="detailCategory"></p>
+      <h2 class="detail-title" id="detailTitle"></h2>
+      <p class="detail-description" id="detailDescription"></p>
+      <div class="detail-meta">
+        <div class="detail-meta-row">
+          <span class="detail-meta-label">File</span>
+          <span class="detail-meta-value" id="detailFile"></span>
+        </div>
+      </div>
+      <button id="detailCloseBtn" class="detail-close-btn">Close</button>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script type="module" src="js/gallery.js"></script>
+</body>
+</html>
