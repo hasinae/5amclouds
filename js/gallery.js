@@ -80,11 +80,11 @@ var ROWS = Math.ceil(total / COLS);
 
 var PLANE_W = 2.3;
 var PLANE_H = 3.05;
-var SPACING_X = PLANE_W * 1.12;
-var SPACING_Y = PLANE_H * 1.12;
+var SPACING_X = PLANE_W * 1.03;
+var SPACING_Y = PLANE_H * 1.03;
 var HERO_COL = Math.floor(COLS / 2);
-var HERO_ROW = 1 % ROWS;
-var HERO_INDEX = HERO_ROW * COLS + HERO_COL;
+var HERO_SCALE = 1.65;
+var HERO_Z_PUSH = 1.6;
 
 function seededFrac(i) {
   var seed = Math.sin(i * 12.9898) * 43758.5453;
@@ -128,22 +128,23 @@ GALLERY_IMAGES.forEach(function (data, i) {
 
   var x = colOffset * SPACING_X;
   var y = -row * SPACING_Y + SPACING_Y * 1.4;
-  var z = -Math.abs(colOffset) * 0.55;
+  var z = -Math.abs(colOffset) * 0.7;
 
-  var isHero = i === HERO_INDEX;
-  var tilt = (seededFrac(i) - 0.5) * 20; // -10..10 deg
-  var rotY = colOffset * -0.16;
+  var tiltRad = THREE.MathUtils.degToRad((seededFrac(i) - 0.5) * 20); // -10..10 deg
+  var rotY = colOffset * -0.2;
 
-  if (isHero) {
-    mesh.position.set(x, y, z + 1.6);
-    mesh.rotation.set(0, 0, 0);
-    mesh.scale.set(1.65, 1.65, 1.65);
-  } else {
-    mesh.position.set(x, y, z);
-    mesh.rotation.set(0, rotY, THREE.MathUtils.degToRad(tilt));
-  }
+  mesh.position.set(x, y, z);
+  mesh.rotation.set(0, rotY, tiltRad);
 
-  mesh.userData = { index: i, baseZ: mesh.position.z, isHero: isHero };
+  mesh.userData = {
+    index: i,
+    col: col,
+    baseX: x,
+    baseY: y,
+    baseZ: z,
+    baseRotY: rotY,
+    baseTilt: tiltRad
+  };
   group.add(mesh);
   meshes.push(mesh);
 
@@ -165,7 +166,8 @@ GALLERY_IMAGES.forEach(function (data, i) {
   });
 });
 
-var contentHeight = ROWS * SPACING_Y;
+var ROW0_Y = SPACING_Y * 1.4;
+var LAST_ROW_Y = -(ROWS - 1) * SPACING_Y + ROW0_Y;
 
 /* ---------------- Interaction ---------------- */
 var mouseNDC = new THREE.Vector2(0, 0);
@@ -173,7 +175,9 @@ var targetRotX = 0;
 var targetRotY = 0;
 var scrollY = 0;
 var scrollTarget = 0;
-var maxScroll = Math.max(0, contentHeight - SPACING_Y * 2);
+var minScroll = -SPACING_Y * 0.5;
+var maxScroll = Math.max(0, -LAST_ROW_Y + SPACING_Y * 0.6);
+var SCROLL_SENS = 0.025;
 
 var pointerDown = false;
 var dragging = false;
@@ -193,7 +197,7 @@ function onPointerMove(e) {
     var dx = e.clientX - startX;
     var dy = e.clientY - startY;
     if (Math.abs(dx) > 6 || Math.abs(dy) > 6) dragging = true;
-    scrollTarget = clamp(startScroll + dy * 1.4, -maxScroll, SPACING_Y * 0.5);
+    scrollTarget = clamp(startScroll - dy * SCROLL_SENS, minScroll, maxScroll);
   }
 }
 
@@ -215,7 +219,7 @@ function onPointerUp(e) {
 }
 
 function onWheel(e) {
-  scrollTarget = clamp(scrollTarget - e.deltaY * 1.0, -maxScroll, SPACING_Y * 0.5);
+  scrollTarget = clamp(scrollTarget + e.deltaY * SCROLL_SENS, minScroll, maxScroll);
 }
 
 function clamp(v, min, max) {
@@ -273,6 +277,11 @@ document.addEventListener('keydown', function (e) {
 });
 
 /* ---------------- Render Loop ---------------- */
+function smoothstep(t) {
+  t = clamp(t, 0, 1);
+  return t * t * (3 - 2 * t);
+}
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -281,6 +290,21 @@ function animate() {
 
   group.rotation.y += (targetRotY - group.rotation.y) * 0.06;
   group.rotation.x += (targetRotX - group.rotation.x) * 0.06;
+
+  for (var i = 0; i < meshes.length; i++) {
+    var mesh = meshes[i];
+    var d = mesh.userData;
+    if (d.col !== HERO_COL) continue;
+
+    var worldY = d.baseY + scrollY;
+    var focus = smoothstep(1 - Math.abs(worldY) / (SPACING_Y * 0.75));
+
+    var scale = 1 + (HERO_SCALE - 1) * focus;
+    mesh.scale.setScalar(scale);
+    mesh.rotation.y = d.baseRotY * (1 - focus);
+    mesh.rotation.z = d.baseTilt * (1 - focus);
+    mesh.position.z = d.baseZ + HERO_Z_PUSH * focus;
+  }
 
   renderer.render(scene, camera);
 }
