@@ -126,12 +126,16 @@ GALLERY_IMAGES.forEach(function (data, i) {
   var centerCol = (COLS - 1) / 2;
   var colOffset = col - centerCol;
 
-  var x = colOffset * SPACING_X;
-  var y = -row * SPACING_Y + SPACING_Y * 1.4;
-  var z = -Math.abs(colOffset) * 0.7;
+  var jitterX = (seededFrac(i * 7 + 1) - 0.5) * SPACING_X * 0.6;
+  var jitterY = (seededFrac(i * 13 + 2) - 0.5) * SPACING_Y * 0.6;
+  var jitterZ = (seededFrac(i * 17 + 3) - 0.5) * 0.7;
 
-  var tiltRad = THREE.MathUtils.degToRad((seededFrac(i) - 0.5) * 20); // -10..10 deg
-  var rotY = colOffset * -0.2;
+  var x = colOffset * SPACING_X + jitterX;
+  var y = -row * SPACING_Y + SPACING_Y * 1.4 + jitterY;
+  var z = -Math.abs(colOffset) * 0.7 + jitterZ;
+
+  var tiltRad = THREE.MathUtils.degToRad((seededFrac(i) - 0.5) * 26); // -13..13 deg
+  var rotY = colOffset * -0.2 + (seededFrac(i * 5 + 4) - 0.5) * 0.3;
 
   mesh.position.set(x, y, z);
   mesh.rotation.set(0, rotY, tiltRad);
@@ -143,7 +147,9 @@ GALLERY_IMAGES.forEach(function (data, i) {
     baseY: y,
     baseZ: z,
     baseRotY: rotY,
-    baseTilt: tiltRad
+    baseTilt: tiltRad,
+    aspectScaleX: 1,
+    aspectScaleY: 1
   };
   group.add(mesh);
   meshes.push(mesh);
@@ -153,13 +159,11 @@ GALLERY_IMAGES.forEach(function (data, i) {
     var img = texture.image;
     var imageAspect = img.width / img.height;
     var planeAspect = PLANE_W / PLANE_H;
-    if (imageAspect > planeAspect) {
-      texture.repeat.set(planeAspect / imageAspect, 1);
-      texture.offset.set((1 - texture.repeat.x) / 2, 0);
-    } else {
-      texture.repeat.set(1, imageAspect / planeAspect);
-      texture.offset.set(0, (1 - texture.repeat.y) / 2);
-    }
+    var scaleX = imageAspect > planeAspect ? 1 : imageAspect / planeAspect;
+    var scaleY = imageAspect > planeAspect ? planeAspect / imageAspect : 1;
+    mesh.userData.aspectScaleX = scaleX;
+    mesh.userData.aspectScaleY = scaleY;
+    mesh.scale.set(scaleX, scaleY, 1);
     material.map = texture;
     material.color.set(0xffffff);
     material.needsUpdate = true;
@@ -186,6 +190,17 @@ var startY = 0;
 var startScroll = 0;
 var startTime = 0;
 
+/* Ambient idle drift: keeps the wall in motion when no one is interacting */
+var lastInteraction = performance.now();
+var IDLE_DELAY = 1400;
+var DRIFT_SPEED = 0.006;
+var driftDir = 1;
+var driftRotPhase = 0;
+
+function markInteraction() {
+  lastInteraction = performance.now();
+}
+
 function onPointerMove(e) {
   var nx = (e.clientX / window.innerWidth) * 2 - 1;
   var ny = (e.clientY / window.innerHeight) * 2 - 1;
@@ -198,6 +213,7 @@ function onPointerMove(e) {
     var dy = e.clientY - startY;
     if (Math.abs(dx) > 6 || Math.abs(dy) > 6) dragging = true;
     scrollTarget = clamp(startScroll - dy * SCROLL_SENS, minScroll, maxScroll);
+    markInteraction();
   }
 }
 
@@ -208,6 +224,7 @@ function onPointerDown(e) {
   startY = e.clientY;
   startScroll = scrollTarget;
   startTime = performance.now();
+  markInteraction();
 }
 
 function onPointerUp(e) {
@@ -220,6 +237,7 @@ function onPointerUp(e) {
 
 function onWheel(e) {
   scrollTarget = clamp(scrollTarget + e.deltaY * SCROLL_SENS, minScroll, maxScroll);
+  markInteraction();
 }
 
 function clamp(v, min, max) {
@@ -285,6 +303,23 @@ function smoothstep(t) {
 function animate() {
   requestAnimationFrame(animate);
 
+  var now = performance.now();
+  var idle = !pointerDown && (now - lastInteraction) > IDLE_DELAY;
+
+  if (idle) {
+    scrollTarget += driftDir * DRIFT_SPEED;
+    if (scrollTarget >= maxScroll) {
+      scrollTarget = maxScroll;
+      driftDir = -1;
+    } else if (scrollTarget <= minScroll) {
+      scrollTarget = minScroll;
+      driftDir = 1;
+    }
+    driftRotPhase += 0.0045;
+    targetRotY = Math.sin(driftRotPhase) * 0.1;
+    targetRotX = Math.cos(driftRotPhase * 0.7) * 0.035;
+  }
+
   scrollY += (scrollTarget - scrollY) * 0.08;
   group.position.y = scrollY;
 
@@ -300,7 +335,7 @@ function animate() {
     var focus = smoothstep(1 - Math.abs(worldY) / (SPACING_Y * 0.75));
 
     var scale = 1 + (HERO_SCALE - 1) * focus;
-    mesh.scale.setScalar(scale);
+    mesh.scale.set(d.aspectScaleX * scale, d.aspectScaleY * scale, 1);
     mesh.rotation.y = d.baseRotY * (1 - focus);
     mesh.rotation.z = d.baseTilt * (1 - focus);
     mesh.position.z = d.baseZ + HERO_Z_PUSH * focus;
