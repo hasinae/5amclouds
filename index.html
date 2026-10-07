@@ -84,6 +84,31 @@
   .list__name { font-size: clamp(18px, 2.4vw, 26px); font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
   .list__cat { display: block; font: 12px var(--mono); color: var(--muted); letter-spacing: 0; font-weight: 400; }
   .list a:hover .list__name { color: var(--red); }
+  /* #/series page heading (same look as the old homepage heading) */
+  .x-sl-head { padding: 48px 0 24px; text-align: center; }
+  .x-sl-head h2 { margin: 0; font: 700 28px/1.1 var(--ui); letter-spacing: -.02em; }
+
+  /* home section menu, under the sphere */
+  .x-menu { margin: 0 auto; padding: 24px 0 96px; text-align: center; }
+  .x-menu ol { list-style: none; margin: 0 auto; padding: 0; display: flex; justify-content: center;
+    gap: clamp(20px, 4vw, 88px); flex-wrap: nowrap; }
+  .x-menu li a { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px; min-height: 44px; }
+  .x-menu__w { position: relative; font: 300 clamp(28px, 4.6vw, 64px)/1 var(--ui); letter-spacing: -.04em; white-space: nowrap;
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 8px;
+    text-decoration-color: transparent; transition: text-decoration-color .25s ease; }
+  .x-menu__n { position: absolute; top: 2px; left: 100%; margin-left: 4px; font: 12px/1 var(--mono);
+    letter-spacing: 0; color: var(--muted); }
+  .x-menu__c { font: 12px var(--mono); color: var(--muted); }
+  .x-menu li a:hover .x-menu__w, .x-menu li a:focus-visible .x-menu__w { text-decoration-color: currentColor; }
+  .x-menu__ig { display: inline-flex; align-items: center; min-height: 44px; margin-top: 48px; padding: 0 8px;
+    font: 12px var(--mono); color: var(--muted); }
+  .x-menu__ig:hover { text-decoration: underline; text-underline-offset: 4px; color: var(--ink); }
+  @media (max-width: 600px) {
+    .x-menu { padding: 8px 0 72px; }
+    .x-menu ol { flex-direction: column; align-items: center; gap: 28px; }
+    .x-menu__w { font-size: 44px; }
+    .x-menu__ig { margin-top: 36px; }
+  }
 
   /* series */
   .s-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 0 0; }
@@ -246,6 +271,45 @@
     .x-ab, .x-th img { animation: none; }
     .x-th { transition: none; }
   }
+  /* ventures */
+  .x-vn { max-width: 880px; margin: 0 auto; padding: 20px 0 64px; }
+  .x-vn .s-head { padding-bottom: 28px; }
+  .x-vn .s-head p { margin: 0; }
+  .x-vl { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+  .x-vl > li { padding: 20px 0 32px; border-bottom: 1px solid var(--line); }
+  .x-vl__top { display: grid; grid-template-columns: 32px 1fr auto; align-items: baseline; gap: 12px; }
+  .x-vl__top h2 { margin: 0; font: 500 clamp(18px, 2.4vw, 26px)/1.2 var(--ui); letter-spacing: -.02em; }
+  .x-vl__body { margin: 14px 0 0 44px; }
+  .x-vl__desc { margin: 0; max-width: 62ch; font: 400 15px/1.6 var(--ui); }
+  .x-vl__meta { margin: 12px 0 0; font: 12px/1.7 var(--mono); color: var(--muted); }
+  .x-vl__meta p { margin: 0; }
+  .x-vl__links { display: flex; flex-wrap: wrap; gap: 0 20px; margin: 8px 0 0; }
+  .x-vl__links a { display: inline-flex; align-items: center; min-height: 44px; font: 12px var(--mono); color: var(--ink);
+    text-decoration: underline; text-underline-offset: 3px; }
+  .x-vl__links a:hover { color: var(--red); }
+  .x-vl__yt { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; height: auto; margin: 16px 0 0; border: 0; background: #000; }
+  .x-vl__po { position: relative; display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; margin: 16px 0 0; padding: 0;
+    border: 0; outline: 0; background: #000; cursor: pointer; overflow: hidden; }
+  .x-vl__po img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .x-vl__po:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .x-vl__play { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+    background: rgba(0, 0, 0, .55); transition: background .2s ease; }
+  .x-vl__play::after { content: ""; position: absolute; left: 50%; top: 50%; margin: -11px 0 0 -6px;
+    border-style: solid; border-width: 11px 0 11px 18px; border-color: transparent transparent transparent #fff; }
+  .x-vl__po:hover .x-vl__play, .x-vl__po:focus-visible .x-vl__play { background: rgba(0, 0, 0, .75); }
+  .x-vl__tag { position: absolute; left: 10px; bottom: 8px; font: 12px/1 var(--mono); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
+  @media (max-width: 600px) { .x-vl__play { width: 52px; height: 52px; margin: -26px 0 0 -26px; } }
+  .x-vl__imgs { display: flex; gap: 12px; margin: 16px 0 0; }
+  .x-vl__imgs button { flex: var(--r) 1 0; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; cursor: zoom-in; }
+  .x-vl__imgs button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  .x-vl__imgs img { display: block; width: 100%; height: auto; border: 0; }
+  .x-vl__imgs img.is-px, .lb img.is-px { image-rendering: pixelated; }
+  @media (max-width: 600px) {
+    .x-vl__top { grid-template-columns: 26px 1fr auto; }
+    .x-vl__body { margin-left: 0; }
+    .x-vl__imgs { flex-direction: column; }
+    .x-vl__imgs button { flex: none; }
+  }
   .ft { padding: 24px var(--pad); border-top: 1px solid var(--line); font: 12px var(--mono); color: var(--muted); }
 
   /* lightbox */
@@ -267,6 +331,11 @@
     .hd nav a { padding: 0 3px; min-width: 44px; }
     .hd nav .sep { display: none; }
     main { padding-top: 96px; }
+    /* five links: the nav takes its own row under the name */
+    .hd { flex-wrap: wrap; row-gap: 0; }
+    .hd nav { width: 100%; justify-content: flex-start; flex-wrap: nowrap; margin-left: -3px; }
+    main { padding-top: 102px; }
+    .x-dk { height: calc(100vh - 102px); height: calc(100svh - 102px); }
     .row { --h: 42vh; --can: 80px; padding-top: 58px; padding-bottom: 56px; }
     .s-head h1 { font-size: 44px; }
     .x-note { font-size: 19px; }
@@ -332,7 +401,8 @@
   </a>
   <nav aria-label="Main">
     <a href="#/index" data-r="index">index</a><span class="sep">·</span>
-    <a href="#/series/on-silence" data-r="series">series</a><span class="sep">·</span>
+    <a href="#/series" data-r="series">series</a><span class="sep">·</span>
+    <a href="#/ventures" data-r="ventures">ventures</a><span class="sep">·</span>
     <a href="#/about" data-r="about">about</a><span class="sep">·</span>
     <a href="https://www.instagram.com/555amclouds/" target="_blank" rel="noopener">instagram</a>
   </nav>
@@ -432,6 +502,12 @@
   <img data-w="circuit-clips-live" src="assets/circuit-clips-live.webp" alt="" loading="lazy" decoding="async" />
   <img data-w="magazine-live" src="assets/magazine-live.webp" alt="" loading="lazy" decoding="async" />
   <img data-w="star-pillows-live" src="assets/star-pillows-live.webp" alt="" loading="lazy" decoding="async" />
+</div>
+<!-- ventures images: kept out of #pool so the intro, sphere and deck never use them -->
+<div id="vpool" hidden>
+  <img data-v="miasma-title-screen" src="assets/miasma-title-screen.jpg" alt="" loading="lazy" />
+  <img data-v="miasma-campus-site" src="assets/miasma-campus-site.jpg" alt="" loading="lazy" />
+  <img data-v="miasma-trailer-poster" src="assets/miasma-trailer-poster.jpg" alt="" loading="lazy" />
 </div>
 
 <script>
@@ -562,14 +638,32 @@ function tick() {
 tick(); setInterval(tick, 1000);
 
 /* views */
+const SHOW_HOME_SERIES_LIST = false; // re-enable later: true puts the heading + full series list back under the sphere
+/* full numbered series list; used by #/series (and by the homepage when the flag above is true) */
+const seriesList = () => `<ol class="list">${SERIES.map((s, i) => `<li><a href="#/series/${s.slug}">
+      <span class="label">${pad(i + 1)}</span>
+      <span class="list__name">${esc(s.name)}${s.exhibited ? '<span class="x-exh">exhibited</span>' : ''}<span class="list__cat">${esc(s.category)}</span></span>
+      <span class="label">${pad(s.photos.length)} photos</span></a></li>`).join('')}</ol>`;
+const MENU = [
+  ['index', '#/index', 'every photo'],
+  ['series', '#/series', `${SERIES.length} series`],
+  ['ventures', '#/ventures', 'games &amp; apps'],
+  ['about', '#/about', 'the person'],
+];
 function home() {
   return `<div class="view">
     <section id="hero"><div class="x-sc" id="sph"><div class="x-st" aria-hidden="true"></div></div>
-      <h2>Hasina Esteqlal</h2></section>
-    <ol class="list">${SERIES.map((s, i) => `<li><a href="#/series/${s.slug}">
-      <span class="label">${pad(i + 1)}</span>
-      <span class="list__name">${esc(s.name)}${s.exhibited ? '<span class="x-exh">exhibited</span>' : ''}<span class="list__cat">${esc(s.category)}</span></span>
-      <span class="label">${pad(s.photos.length)} photos</span></a></li>`).join('')}</ol>
+      ${SHOW_HOME_SERIES_LIST ? '<h2>Hasina Esteqlal</h2>' : ''}</section>
+    ${SHOW_HOME_SERIES_LIST ? seriesList() : `<nav class="x-menu" aria-label="Sections">
+      <ol>${MENU.map(([w, h, c], i) => `<li><a href="${h}"><span class="x-menu__w">${w}<span class="x-menu__n">${pad(i + 1)}</span></span><span class="x-menu__c">${c}</span></a></li>`).join('')}</ol>
+      <a class="x-menu__ig" href="https://www.instagram.com/555amclouds/" target="_blank" rel="noopener">instagram</a>
+    </nav>`}
+  </div>`;
+}
+function seriesPage() {
+  return `<div class="view">
+    <section class="x-sl-head"><h2>Hasina Esteqlal</h2></section>
+    ${seriesList()}
   </div>`;
 }
 
@@ -681,6 +775,63 @@ const ABOUT_SET = { name: 'About', photos: [...ABOUT_PH.map((p) => ({ file: p.f 
 function bindAbout() {
   $('.x-ab').addEventListener('click', (e) => { const b = e.target.closest('button[data-a]'); if (b && tap(e)) openLb(+b.dataset.a, ABOUT_SET); });
   $('.x-ab-pt').addEventListener('click', (e) => { if (tap(e)) openLb(ABOUT_SET.photos.length - 1, ABOUT_SET); });
+}
+
+/* ventures: games and apps; add an entry by appending an object */
+const VENTURES = [
+  {
+    title: "Markus's Miasma",
+    year: '2025',
+    kind: 'Game · Pro Gamer Studios',
+    released: 'Released June 9, 2025 on Steam, free to play',
+    desc: "Explore a fog-choked, twisted version of UCSC in this 2D puzzle horror game, where cryptic clues and buried memories reveal the disturbing truth behind one man's obsession...",
+    role: 'Founder and CEO, Pro Gamer Studios (indie studio). Art and tech.',
+    credits: 'Trailer: filming, directing, editing, audio, storyboard.',
+    links: [
+      { label: 'Play on Steam', href: 'https://store.steampowered.com/app/3674920/Markuss_Miasma/' },
+      { label: 'Watch the trailer', href: 'https://www.youtube.com/watch?v=xxYVIywezPc' },
+      { label: 'Studio Instagram', href: 'https://www.instagram.com/progamerstudios/' },
+    ],
+    youtube: 'xxYVIywezPc',
+    poster: 'miasma-trailer-poster',
+    images: [
+      { file: 'miasma-title-screen', w: 1260, h: 900, pixel: true, alt: "Markus's Miasma pixel art title screen" },
+      { file: 'miasma-campus-site', w: 1800, h: 1013, alt: "Markus's Miasma in-game menu styled as a fake university website" },
+    ],
+  },
+];
+const vpool = {};
+document.querySelectorAll('#vpool img[data-v]').forEach((i) => (vpool[i.dataset.v] = i.getAttribute('src')));
+const vsrc = (f) => vpool[f] || IMG_BASE + f + '.jpg';
+const ytFrame = (v, auto) => `<iframe class="x-vl__yt" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube)}${auto ? '?autoplay=1' : ''}" title="${esc(v.title)} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen${auto ? '' : ' loading="lazy"'} referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+function ventures() {
+  return `<div class="view"><div class="x-vn">
+    <div class="s-head"><h1>Ventures</h1><p class="label">Games and apps I've built, from studio to prototype.</p></div>
+    <ol class="x-vl">${VENTURES.map((v, i) => `<li>
+      <div class="x-vl__top"><span class="label">${pad(i + 1)}</span>
+        <h2>${esc(v.title)}<span class="list__cat">${esc(v.kind)}</span></h2>
+        <span class="label">${esc(v.year)}</span></div>
+      <div class="x-vl__body">
+        ${v.desc ? `<p class="x-vl__desc">${esc(v.desc)}</p>` : ''}
+        <div class="x-vl__meta">${v.released ? `<p>${esc(v.released)}</p>` : ''}${v.role ? `<p>${esc(v.role)}</p>` : ''}${v.credits ? `<p>${esc(v.credits)}</p>` : ''}</div>
+        ${v.links && v.links.length ? `<p class="x-vl__links">${v.links.map((l) => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</p>` : ''}
+        ${v.youtube ? (v.poster ? `<button type="button" class="x-vl__po" data-yt="${i}" aria-label="Play ${esc(v.title)} trailer"><img src="${vsrc(v.poster)}" width="1280" height="720" alt="" loading="lazy" decoding="async" /><span class="x-vl__play" aria-hidden="true"></span><span class="x-vl__tag" aria-hidden="true">trailer</span></button>` : ytFrame(v)) : ''}
+        ${v.images && v.images.length ? `<div class="x-vl__imgs">${v.images.map((p, n) => `<button type="button" data-v="${i}" data-n="${n}" style="--r:${(p.w / p.h).toFixed(4)}" aria-label="Open image: ${esc(p.alt)}"><img src="${vsrc(p.file)}"${p.pixel ? ' class="is-px"' : ''} width="${p.w}" height="${p.h}" alt="${esc(p.alt)}" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
+      </div></li>`).join('')}</ol>
+  </div></div>`;
+}
+function bindVentures() {
+  $('.x-vl').addEventListener('click', (e) => {
+    const po = e.target.closest('button[data-yt]');
+    if (po) {
+      if (!tap(e)) return;
+      po.outerHTML = ytFrame(VENTURES[+po.dataset.yt], true);
+      return;
+    }
+    const b = e.target.closest('button[data-v]'); if (!b || !tap(e)) return;
+    const v = VENTURES[+b.dataset.v];
+    openLb(+b.dataset.n, { name: v.title, photos: v.images, venture: true });
+  });
 }
 
 /* index: stacked deck of every item, in data order, with the pomegranate-carpet still moved to the exact middle */
@@ -836,12 +987,14 @@ function route() {
   if (m && ALIAS[m[1]]) { location.replace('#/series/' + ALIAS[m[1]]); return; }
   current = null;
   if (m && SERIES.find((s) => s.slug === m[1])) { current = SERIES.find((s) => s.slug === m[1]); html = series(current); key = 'series'; }
+  else if (/^\/series\/?$/.test(h)) { html = seriesPage(); key = 'series'; }
   else if (h.startsWith('/about')) { html = about(); key = 'about'; }
+  else if (h.startsWith('/ventures')) { html = ventures(); key = 'ventures'; }
   else if (h.startsWith('/index')) { html = deck(); key = 'index'; }
   else html = home();
   document.querySelectorAll('.hd nav a[data-r]').forEach((a) =>
     a.dataset.r === key ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  document.title = (current ? current.name + ' · ' : key === 'about' ? 'About · ' : key === 'index' ? 'Index · ' : '') + 'Hasina Esteqlal | Photography Archive';
+  document.title = (current ? current.name + ' · ' : key === 'about' ? 'About · ' : key === 'series' ? 'Series · ' : key === 'ventures' ? 'Ventures · ' : key === 'index' ? 'Index · ' : '') + 'Hasina Esteqlal | Photography Archive';
   app.classList.add('is-out');
   setTimeout(() => {
     stopSphere(); stopWall();
@@ -851,6 +1004,7 @@ function route() {
     if (key === 'home') stopSphere = initSphere();
     if (key === 'index') stopSphere = initDeck();
     if (key === 'about') bindAbout();
+    if (key === 'ventures') bindVentures();
     requestAnimationFrame(() => app.classList.remove('is-out'));
   }, 180);
 }
@@ -949,7 +1103,8 @@ function show(n) {
   const p = ph[idx];
   if (!lbImgIn) { $('#lb-fig').prepend(lbImg); lbImgIn = true; }
   if (isLive(p)) lbImg.dataset.fb = p.file; else delete lbImg.dataset.fb;
-  lbImg.src = msrc(p);
+  lbImg.src = set.venture ? vsrc(p.file) : msrc(p);
+  lbImg.classList.toggle('is-px', !!p.pixel);
   lbImg.alt = p.alt || `${set.name}, ${p.live ? 'clip' : 'photo'} ${idx + 1}`;
   lbCap.textContent = `${set.name} ${idx + 1}/${N}`;
 }
