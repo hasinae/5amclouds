@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Hasina Esteqlal | Photography Archive</title>
-<link rel="icon" href="favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="icon" href="icons/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 <meta name="description" content="Photography archive of Hasina Esteqlal, Bay Area." />
 <meta property="og:title" content="Hasina Esteqlal | Photography Archive" />
 <meta property="og:description" content="Photography archive of Hasina Esteqlal, Bay Area." />
@@ -25,9 +25,13 @@
     --mono: "Courier Prime", "Courier New", monospace;
     --hand: "Caveat", cursive;
     --pad: clamp(16px, 3vw, 32px);
+    /* iOS safe areas (0 on desktop) */
+    --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
+    --pad: max(clamp(16px, 3vw, 32px), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--paper); color: var(--ink); }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body { font: 400 12px/1.5 var(--ui); -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
   img { -webkit-user-drag: none; user-select: none; -webkit-touch-callout: none; }
@@ -36,19 +40,23 @@
 
   /* header */
   .hd { position: fixed; inset: 0 0 auto; z-index: 20; display: flex; justify-content: space-between;
-    align-items: center; gap: 12px; padding: 6px var(--pad); background: rgba(244,242,237,.92);
+    align-items: center; gap: 12px; padding: calc(6px + var(--sat)) var(--pad) 6px; background: rgba(244,242,237,.92);
     backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
   .hd__id { display: flex; flex-direction: column; justify-content: center; min-height: 44px; }
   .hd__name { font-weight: 600; font-size: 13px; letter-spacing: -.01em; }
   .hd__time { font: 12px/1.2 var(--mono); color: var(--muted); }
   .hd nav { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-  .hd nav a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px;
+  .hd nav a { position: relative; display: inline-flex; align-items: center; min-height: 44px;
     justify-content: center; padding: 0 6px; }
+  /* 44px tap area without widening short labels like "tech", so every separator gap is equal */
+  .hd nav a::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%;
+    width: max(100%, 44px); transform: translateX(-50%); }
+  .hd nav .sep { flex: none; padding: 0; margin: 0; }
   .hd nav a[aria-current="page"] { text-decoration: underline; text-decoration-color: var(--red);
     text-decoration-thickness: 2px; text-underline-offset: 4px; }
   .hd nav .sep { color: var(--muted); }
 
-  main { padding-top: 58px; min-height: 100vh; transition: opacity .22s ease; }
+  main { padding-top: calc(58px + var(--sat)); min-height: 100vh; min-height: 100dvh; transition: opacity .22s ease; }
   main.is-out { opacity: 0; }
   .view { padding: 0 var(--pad); }
   .label { font: 12px var(--mono); color: var(--muted); }
@@ -87,6 +95,24 @@
   /* #/series page heading (same look as the old homepage heading) */
   .x-sl-head { padding: 48px 0 24px; text-align: center; }
   .x-sl-head h2 { margin: 0; font: 700 28px/1.1 var(--ui); letter-spacing: -.02em; }
+  /* #/series cover grid (SERIES_LIST_STYLE = 'grid') */
+  .x-sg-view { max-width: 1600px; margin: 0 auto; }
+  .x-sg-head { padding: 40px 0 24px; }
+  .x-sg-head h2 { margin: 0; font: 700 22px/1.2 var(--ui); letter-spacing: -.01em; text-align: left; }
+  .x-sg { list-style: none; margin: 0 0 72px; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px 16px; }
+  @media (min-width: 360px) { .x-sg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 768px) { .x-sg { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 24px; } }
+  @media (min-width: 1100px) { .x-sg { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 48px 32px; } }
+  .x-sg a { display: block; }
+  .x-sg__img { display: block; aspect-ratio: 1 / 1; overflow: hidden; background: var(--line); }
+  .x-sg__img img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; border-radius: 0; }
+  .x-sg__name { display: block; margin-top: 12px; font: 700 15px/1.3 var(--ui); letter-spacing: -.01em; }
+  .x-sg__meta { display: block; margin-top: 2px; font: 400 13px/1.4 var(--ui); color: var(--muted); }
+  @media (hover: hover) and (pointer: fine) {
+    .x-sg__img img { transition: transform .35s ease, opacity .35s ease; }
+    .x-sg a:hover .x-sg__img img { transform: scale(1.02); opacity: .92; }
+  }
+  @media (prefers-reduced-motion: reduce) { .x-sg__img img { transition: none !important; } }
 
   /* home section menu, under the sphere */
   .x-menu { margin: 0 auto; padding: 24px 0 96px; text-align: center; }
@@ -103,6 +129,7 @@
   .x-menu__ig { display: inline-flex; align-items: center; min-height: 44px; margin-top: 48px; padding: 0 8px;
     font: 12px var(--mono); color: var(--muted); }
   .x-menu__ig:hover { text-decoration: underline; text-underline-offset: 4px; color: var(--ink); }
+  .x-menu__dot { font: 12px var(--mono); color: var(--muted); }
   @media (max-width: 600px) {
     .x-menu { padding: 8px 0 72px; }
     .x-menu ol { flex-direction: column; align-items: center; gap: 28px; }
@@ -145,13 +172,10 @@
   .row button { position: relative; }
   .x-strip button { background: #222; }
   .x-clean button { background: var(--line); }
-  .x-note { position: absolute; left: 14px; display: flex; flex-direction: column; align-items: flex-start;
-    font: 500 21px/1 var(--hand); color: #2a2622; white-space: nowrap; pointer-events: none; }
-  .x-note svg { width: 34px; height: 26px; margin-left: 8px; }
-  .x-note.up { bottom: calc(100% + 28px); }
-  .x-note.dn { top: calc(100% + 28px); flex-direction: column-reverse; left: auto; right: 14px; align-items: flex-end; }
-  .x-note.dn svg { transform: scaleY(-1); margin: 0 8px 0 0; }
-  .row .next { flex: none; padding: 0 24px 0 4px; font: 500 30px var(--hand); color: var(--red); white-space: nowrap; }
+  /* film strip: no notes above or below, so the row closes up */
+  .row:not(.is-clean) { padding-top: 16px; padding-bottom: 16px; }
+  .row .next { flex: none; padding: 0 24px 0 4px; font: 500 30px var(--hand); color: var(--red); white-space: nowrap;
+    scroll-snap-align: end; }
   .row .next:hover { text-decoration: underline; }
   .bar { height: 2px; background: var(--line); margin: 8px 0 12px; }
   .bar i { display: block; height: 100%; width: 0; background: var(--ink); }
@@ -163,7 +187,7 @@
 
   /* exhibition wall (On Silence) */
   .x-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .x-wv { min-height: calc(100vh - 58px); padding-bottom: 4px; background: var(--paper); }
+  .x-wv { min-height: calc(100vh - 58px); min-height: calc(100dvh - 58px - var(--sat)); padding-bottom: 4px; background: var(--paper); }
   .x-wv__in { max-width: 1320px; margin: 0 auto; }
   .x-wall { display: grid; grid-template-columns: minmax(0, 1fr); margin: 24px auto 0; }
   /* puzzle tiling: rows of grid cells, one gutter, heights solved from the wall width */
@@ -202,7 +226,7 @@
   @media (prefers-reduced-motion: reduce) { .x-pr { opacity: 1; transform: none; transition: none; } }
 
   /* index: stacked deck */
-  .x-dk { --cw: 260px; --ch: 180px; --ang: 24deg; position: relative; height: calc(100vh - 58px); height: calc(100svh - 58px);
+  .x-dk { --cw: 260px; --ch: 180px; --ang: 24deg; position: relative; height: calc(100vh - 58px); height: calc(100dvh - 58px - var(--sat));
     overflow: hidden; perspective: 1600px; touch-action: none; user-select: none; cursor: grab; background: var(--paper); }
   .x-dk__sh { position: absolute; left: 50%; top: 50%; width: 120%; height: 140px; margin: -70px 0 0 -60%; pointer-events: none;
     background: radial-gradient(closest-side, rgba(17,17,17,.16), rgba(17,17,17,0)); filter: blur(10px);
@@ -304,9 +328,38 @@
   .x-vl__imgs button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
   .x-vl__imgs img { display: block; width: 100%; height: auto; border: 0; }
   .x-vl__imgs img.is-px, .lb img.is-px { image-rendering: pixelated; }
+  .x-vl__imgs--gif button { flex: 0 1 560px; }
+  /* compact two-up pairs */
+  .x-vl__pair { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  .x-vl__card { min-width: 0; }
+  .x-vl__ct { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .x-vl__card h2 { margin: 6px 0 0; font: 500 clamp(16px, 2vw, 21px)/1.2 var(--ui); letter-spacing: -.02em; }
+  .x-vl__card .x-vl__body { margin: 10px 0 0; }
+  .x-vl__card .x-vl__imgs { display: block; margin-top: 12px; }
+  .x-vl__card .x-vl__imgs button { display: block; width: 100%; flex: none; aspect-ratio: 16 / 9; overflow: hidden; }
+  .x-vl__card .x-vl__imgs img { width: 100%; height: 100%; object-fit: cover; }
+  /* full-width entries: media spans the number-to-year edges, flush with the divider lines */
+  .x-vl > li > .x-vl__body > .x-vl__imgs, .x-vl > li > .x-vl__body > .x-vl__po, .x-vl > li > .x-vl__body > .x-vl__yt {
+    width: calc(100% + 44px); max-width: none; margin-left: -44px; }
+  .x-vl > li > .x-vl__body > .x-vl__imgs button { flex: var(--r) 1 0; }
+  @media (min-width: 900px) {
+    .x-vl__pair { grid-template-columns: 1fr 1fr; gap: 0 48px; }
+    /* each card is a subgrid so title, text, links and image rows line up across the pair */
+    .x-vl__card { display: grid; grid-row: span 6; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+    .x-vl__card .x-vl__body { display: contents; }
+    .x-vl__card .x-vl__ct { grid-row: 1; }
+    .x-vl__card h2 { grid-row: 2; }
+    .x-vl__card .x-vl__desc { grid-row: 3; margin-top: 10px; }
+    .x-vl__card .x-vl__meta { grid-row: 4; }
+    .x-vl__card .x-vl__links { grid-row: 5; }
+    .x-vl__card .x-vl__imgs { grid-row: 6; align-self: start; }
+  }
   @media (max-width: 600px) {
     .x-vl__top { grid-template-columns: 26px 1fr auto; }
     .x-vl__body { margin-left: 0; }
+    .x-vl > li > .x-vl__body > .x-vl__imgs, .x-vl > li > .x-vl__body > .x-vl__po, .x-vl > li > .x-vl__body > .x-vl__yt {
+      width: 100%; margin-left: 0; }
+    .x-vl > li > .x-vl__body > .x-vl__imgs button { flex: none; }
     .x-vl__imgs { flex-direction: column; }
     .x-vl__imgs button { flex: none; }
   }
@@ -317,14 +370,14 @@
     align-items: center; justify-content: center; }
   .lb.is-open { display: flex; }
   .lb figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .lb img { max-width: 92vw; max-height: 86vh; object-fit: contain; display: block; }
+  .lb img { max-width: 92vw; max-height: 86vh; max-height: 86dvh; object-fit: contain; display: block; }
   .lb figcaption { font: 12px var(--mono); color: #cfccc4; }
   .lb button { position: absolute; width: 48px; height: 48px; border: 0; background: none; color: #f4f2ed;
     font: 22px var(--ui); cursor: pointer; }
   .lb button:hover { color: var(--yellow); }
-  .lb .x { top: 8px; right: 8px; }
-  .lb .pv { left: 4px; top: 50%; transform: translateY(-50%); }
-  .lb .nx { right: 4px; top: 50%; transform: translateY(-50%); }
+  .lb .x { top: calc(8px + var(--sat)); right: calc(8px + env(safe-area-inset-right, 0px)); }
+  .lb .pv { left: calc(4px + env(safe-area-inset-left, 0px)); top: 50%; transform: translateY(-50%); }
+  .lb .nx { right: calc(4px + env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); }
 
   @media (max-width: 600px) {
     .hd { align-items: flex-start; }
@@ -334,13 +387,37 @@
     /* five links: the nav takes its own row under the name */
     .hd { flex-wrap: wrap; row-gap: 0; }
     .hd nav { width: 100%; justify-content: flex-start; flex-wrap: nowrap; margin-left: -3px; }
-    main { padding-top: 102px; }
-    .x-dk { height: calc(100vh - 102px); height: calc(100svh - 102px); }
+    main { padding-top: calc(102px + var(--sat)); }
+    .x-dk { height: calc(100vh - 102px); height: calc(100dvh - 102px - var(--sat)); }
+    .x-wv { min-height: calc(100dvh - 102px - var(--sat)); }
     .row { --h: 42vh; --can: 80px; padding-top: 58px; padding-bottom: 56px; }
     .s-head h1 { font-size: 44px; }
-    .x-note { font-size: 19px; }
-    .x-note.opt { display: none; }
     .list a { grid-template-columns: 26px 1fr auto; }
+
+    /* iPhone polish */
+    body { overflow-x: clip; }
+    .hd__time { white-space: nowrap; }
+    a, button { touch-action: manipulation; }
+    /* Safari address bar: strip and hero heights from the small viewport, so they never jump */
+    @supports (height: 1svh) {
+      .row { --h: 42svh; }
+      #hero { min-height: 70svh; }
+    }
+    /* a wide photo in a strip never gets wider than the screen */
+    .row button { height: min(var(--h), calc((100vw - 2 * var(--pad) - 48px) / var(--ar, 1))); }
+    /* "next series" is a snap point and keeps room past it, so the end of the strip shows it whole */
+    .row .next { padding-right: 8px; }
+    .x-film::after, .x-clean::after { content: ""; flex: none; width: var(--pad); height: 1px; }
+    .s-foot { padding-bottom: calc(32px + var(--sab)); }
+    .s-foot a { display: inline-flex; align-items: center; min-height: 44px; }
+    /* body text at 14px or larger */
+    .x-sg__meta { font-size: 14px; }
+    .x-ab-meta { font-size: 14px; }
+    .x-vl__meta { font-size: 14px; }
+    .x-vl__links a { font-size: 14px; }
+    /* inline about thumbnails: 44px tap area around the small image */
+    .x-th::after { content: ""; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px);
+      transform: translate(-50%, -50%); }
   }
   @media (prefers-reduced-motion: reduce) { main { transition: none; } }
 
@@ -402,7 +479,7 @@
   <nav aria-label="Main">
     <a href="#/index" data-r="index">index</a><span class="sep">·</span>
     <a href="#/series" data-r="series">series</a><span class="sep">·</span>
-    <a href="#/ventures" data-r="ventures">ventures</a><span class="sep">·</span>
+    <a href="#/tech" data-r="tech">tech</a><span class="sep">·</span>
     <a href="#/about" data-r="about">about</a><span class="sep">·</span>
     <a href="https://www.instagram.com/555amclouds/" target="_blank" rel="noopener">instagram</a>
   </nav>
@@ -419,104 +496,106 @@
 
 <!-- static image references, so every photo ships with the page -->
 <div id="pool" hidden>
-  <img data-f="pomegranate-carpet" src="assets/pomegranate-carpet.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-dagger" src="assets/pomegranate-dagger.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-open" src="assets/pomegranate-open.jpg" alt="" loading="lazy" />
-  <img data-f="hasina-portrait-yosemite" src="assets/hasina-portrait-yosemite.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-palm" src="assets/pomegranate-palm.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-scissors" src="assets/pomegranate-scissors.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-gold" src="assets/pomegranate-gold.jpg" alt="" loading="lazy" />
-  <img data-f="gold-thread-sway" src="assets/gold-thread-sway.jpg" alt="" loading="lazy" />
-  <img data-f="gold-thread-coins" src="assets/gold-thread-coins.jpg" alt="" loading="lazy" />
-  <img data-f="gold-thread-shade" src="assets/gold-thread-shade.jpg" alt="" loading="lazy" />
-  <img data-f="garden-moss-boulders" src="assets/garden-moss-boulders.jpg" alt="" loading="lazy" />
-  <img data-f="garden-pagoda-reflection" src="assets/garden-pagoda-reflection.jpg" alt="" loading="lazy" />
-  <img data-f="garden-moss-trunk" src="assets/garden-moss-trunk.jpg" alt="" loading="lazy" />
-  <img data-f="garden-stone-lantern" src="assets/garden-stone-lantern.jpg" alt="" loading="lazy" />
-  <img data-f="garden-lily-pond" src="assets/garden-lily-pond.jpg" alt="" loading="lazy" />
-  <img data-f="garden-lantern-maples" src="assets/garden-lantern-maples.jpg" alt="" loading="lazy" />
-  <img data-f="garden-pond-reflection" src="assets/garden-pond-reflection.jpg" alt="" loading="lazy" />
-  <img data-f="paper-sky-room" src="assets/paper-sky-room.jpg" alt="" loading="lazy" />
-  <img data-f="paper-sky-wave" src="assets/paper-sky-wave.jpg" alt="" loading="lazy" />
-  <img data-f="paper-sky-color" src="assets/paper-sky-color.jpg" alt="" loading="lazy" />
-  <img data-f="unraveling-carpet-tall" src="assets/unraveling-carpet-tall.jpg" alt="" loading="lazy" />
-  <img data-f="unraveling-carpet-melt" src="assets/unraveling-carpet-melt.jpg" alt="" loading="lazy" />
-  <img data-f="unraveling-red-wall" src="assets/unraveling-red-wall.jpg" alt="" loading="lazy" />
-  <img data-f="surface-aquarium" src="assets/surface-aquarium.jpg" alt="" loading="lazy" />
-  <img data-f="surface-alligator" src="assets/surface-alligator.jpg" alt="" loading="lazy" />
-  <img data-f="surface-koi" src="assets/surface-koi.jpg" alt="" loading="lazy" />
-  <img data-f="tide-blue" src="assets/tide-blue.jpg" alt="" loading="lazy" />
-  <img data-f="tide-rocks" src="assets/tide-rocks.jpg" alt="" loading="lazy" />
-  <img data-f="tide-dark" src="assets/tide-dark.jpg" alt="" loading="lazy" />
-  <img data-f="sunset-figures" src="assets/sunset-figures.jpg" alt="" loading="lazy" />
-  <img data-f="sunset-waves" src="assets/sunset-waves.jpg" alt="" loading="lazy" />
-  <img data-f="sunset-vertical" src="assets/sunset-vertical.jpg" alt="" loading="lazy" />
-  <img data-f="sunset-beach" src="assets/sunset-beach.jpg" alt="" loading="lazy" />
-  <img data-f="streets-harbor" src="assets/streets-harbor.jpg" alt="" loading="lazy" />
-  <img data-f="streets-stickers" src="assets/streets-stickers.jpg" alt="" loading="lazy" />
-  <img data-f="streets-posters" src="assets/streets-posters.jpg" alt="" loading="lazy" />
-  <img data-f="graffiti" src="assets/graffiti.jpg" alt="" loading="lazy" />
-  <img data-f="night-city-blur" src="assets/night-city-blur.jpg" alt="" loading="lazy" />
-  <img data-f="after-dark-neon" src="assets/after-dark-neon.jpg" alt="" loading="lazy" />
-  <img data-f="after-dark-lights" src="assets/after-dark-lights.jpg" alt="" loading="lazy" />
-  <img data-f="red-dress-script" src="assets/red-dress-script.jpg" alt="" loading="lazy" />
-  <img data-f="star-cutout-diptych" src="assets/star-cutout-diptych.jpg" alt="" loading="lazy" />
-  <img data-f="star-collage" src="assets/star-collage.jpg" alt="" loading="lazy" />
-  <img data-f="fog-path" src="assets/fog-path.jpg" alt="" loading="lazy" />
-  <img data-f="fog-oak" src="assets/fog-oak.jpg" alt="" loading="lazy" />
-  <img data-f="fog-sign" src="assets/fog-sign.jpg" alt="" loading="lazy" />
-  <img data-f="fog-clover" src="assets/fog-clover.jpg" alt="" loading="lazy" />
-  <img data-f="fog-blur" src="assets/fog-blur.jpg" alt="" loading="lazy" />
-  <img data-f="fog-forest" src="assets/fog-forest.jpg" alt="" loading="lazy" />
-  <img data-f="frost-glass" src="assets/frost-glass.jpg" alt="" loading="lazy" />
-  <img data-f="jellyfish" src="assets/jellyfish.jpg" alt="" loading="lazy" />
-  <img data-f="field-sunset" src="assets/field-sunset.jpg" alt="" loading="lazy" />
-  <img data-f="field-cow" src="assets/field-cow.jpg" alt="" loading="lazy" />
-  <img data-f="green-head-bridge" src="assets/green-head-bridge.jpg" alt="" loading="lazy" />
-  <img data-f="green-heads-door" src="assets/green-heads-door.jpg" alt="" loading="lazy" />
-  <img data-f="rug-flat" src="assets/rug-flat.jpg" alt="" loading="lazy" />
-  <img data-f="koi-reflection" src="assets/koi-reflection.jpg" alt="" loading="lazy" />
-  <img data-f="tide-sailboat" src="assets/tide-sailboat.jpg" alt="" loading="lazy" />
-  <img data-f="tide-cliff-cove" src="assets/tide-cliff-cove.jpg" alt="" loading="lazy" />
-  <img data-f="tide-sea-cave" src="assets/tide-sea-cave.jpg" alt="" loading="lazy" />
-  <img data-f="tide-rock-spray" src="assets/tide-rock-spray.jpg" alt="" loading="lazy" />
-  <img data-f="sunset-fire-clouds" src="assets/sunset-fire-clouds.jpg" alt="" loading="lazy" />
-  <img data-f="sunset-rays" src="assets/sunset-rays.jpg" alt="" loading="lazy" />
-  <img data-f="dusk-bay-eucalyptus" src="assets/dusk-bay-eucalyptus.jpg" alt="" loading="lazy" />
-  <img data-f="woods-graffiti" src="assets/woods-graffiti.jpg" alt="" loading="lazy" />
-  <img data-f="prints-chihuahua" src="assets/prints-chihuahua.jpg" alt="" loading="lazy" />
-  <img data-f="prints-marlboro" src="assets/prints-marlboro.jpg" alt="" loading="lazy" />
-  <img data-f="prints-stereo" src="assets/prints-stereo.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-carpet-live" src="assets/pomegranate-carpet-live.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-hand-live" src="assets/pomegranate-hand-live.jpg" alt="" loading="lazy" />
-  <img data-f="pomegranate-gold-live" src="assets/pomegranate-gold-live.jpg" alt="" loading="lazy" />
-  <img data-f="palm-drawing-live" src="assets/palm-drawing-live.jpg" alt="" loading="lazy" />
-  <img data-f="circuit-clips-live" src="assets/circuit-clips-live.jpg" alt="" loading="lazy" />
-  <img data-f="magazine-live" src="assets/magazine-live.jpg" alt="" loading="lazy" />
-  <img data-f="star-pillows-live" src="assets/star-pillows-live.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-carpet" src="assets/photos/pomegranate-carpet.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-dagger" src="assets/photos/pomegranate-dagger.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-open" src="assets/photos/pomegranate-open.jpg" alt="" loading="lazy" />
+  <img data-f="hasina-portrait-yosemite" src="assets/photos/hasina-portrait-yosemite.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-palm" src="assets/photos/pomegranate-palm.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-scissors" src="assets/photos/pomegranate-scissors.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-gold" src="assets/photos/pomegranate-gold.jpg" alt="" loading="lazy" />
+  <img data-f="gold-thread-sway" src="assets/photos/gold-thread-sway.jpg" alt="" loading="lazy" />
+  <img data-f="gold-thread-coins" src="assets/photos/gold-thread-coins.jpg" alt="" loading="lazy" />
+  <img data-f="gold-thread-shade" src="assets/photos/gold-thread-shade.jpg" alt="" loading="lazy" />
+  <img data-f="garden-moss-boulders" src="assets/photos/garden-moss-boulders.jpg" alt="" loading="lazy" />
+  <img data-f="garden-pagoda-reflection" src="assets/photos/garden-pagoda-reflection.jpg" alt="" loading="lazy" />
+  <img data-f="garden-moss-trunk" src="assets/photos/garden-moss-trunk.jpg" alt="" loading="lazy" />
+  <img data-f="garden-stone-lantern" src="assets/photos/garden-stone-lantern.jpg" alt="" loading="lazy" />
+  <img data-f="garden-lily-pond" src="assets/photos/garden-lily-pond.jpg" alt="" loading="lazy" />
+  <img data-f="garden-lantern-maples" src="assets/photos/garden-lantern-maples.jpg" alt="" loading="lazy" />
+  <img data-f="garden-pond-reflection" src="assets/photos/garden-pond-reflection.jpg" alt="" loading="lazy" />
+  <img data-f="paper-sky-room" src="assets/photos/paper-sky-room.jpg" alt="" loading="lazy" />
+  <img data-f="paper-sky-wave" src="assets/photos/paper-sky-wave.jpg" alt="" loading="lazy" />
+  <img data-f="paper-sky-color" src="assets/photos/paper-sky-color.jpg" alt="" loading="lazy" />
+  <img data-f="unraveling-carpet-tall" src="assets/photos/unraveling-carpet-tall.jpg" alt="" loading="lazy" />
+  <img data-f="unraveling-carpet-melt" src="assets/photos/unraveling-carpet-melt.jpg" alt="" loading="lazy" />
+  <img data-f="unraveling-red-wall" src="assets/photos/unraveling-red-wall.jpg" alt="" loading="lazy" />
+  <img data-f="surface-aquarium" src="assets/photos/surface-aquarium.jpg" alt="" loading="lazy" />
+  <img data-f="surface-alligator" src="assets/photos/surface-alligator.jpg" alt="" loading="lazy" />
+  <img data-f="surface-koi" src="assets/photos/surface-koi.jpg" alt="" loading="lazy" />
+  <img data-f="tide-blue" src="assets/photos/tide-blue.jpg" alt="" loading="lazy" />
+  <img data-f="tide-rocks" src="assets/photos/tide-rocks.jpg" alt="" loading="lazy" />
+  <img data-f="tide-dark" src="assets/photos/tide-dark.jpg" alt="" loading="lazy" />
+  <img data-f="sunset-figures" src="assets/photos/sunset-figures.jpg" alt="" loading="lazy" />
+  <img data-f="sunset-waves" src="assets/photos/sunset-waves.jpg" alt="" loading="lazy" />
+  <img data-f="sunset-vertical" src="assets/photos/sunset-vertical.jpg" alt="" loading="lazy" />
+  <img data-f="sunset-beach" src="assets/photos/sunset-beach.jpg" alt="" loading="lazy" />
+  <img data-f="streets-harbor" src="assets/photos/streets-harbor.jpg" alt="" loading="lazy" />
+  <img data-f="streets-stickers" src="assets/photos/streets-stickers.jpg" alt="" loading="lazy" />
+  <img data-f="streets-posters" src="assets/photos/streets-posters.jpg" alt="" loading="lazy" />
+  <img data-f="graffiti" src="assets/photos/graffiti.jpg" alt="" loading="lazy" />
+  <img data-f="night-city-blur" src="assets/photos/night-city-blur.jpg" alt="" loading="lazy" />
+  <img data-f="after-dark-neon" src="assets/photos/after-dark-neon.jpg" alt="" loading="lazy" />
+  <img data-f="after-dark-lights" src="assets/photos/after-dark-lights.jpg" alt="" loading="lazy" />
+  <img data-f="red-dress-script" src="assets/photos/red-dress-script.jpg" alt="" loading="lazy" />
+  <img data-f="star-cutout-diptych" src="assets/photos/star-cutout-diptych.jpg" alt="" loading="lazy" />
+  <img data-f="star-collage" src="assets/photos/star-collage.jpg" alt="" loading="lazy" />
+  <img data-f="fog-path" src="assets/photos/fog-path.jpg" alt="" loading="lazy" />
+  <img data-f="fog-oak" src="assets/photos/fog-oak.jpg" alt="" loading="lazy" />
+  <img data-f="fog-sign" src="assets/photos/fog-sign.jpg" alt="" loading="lazy" />
+  <img data-f="fog-clover" src="assets/photos/fog-clover.jpg" alt="" loading="lazy" />
+  <img data-f="fog-blur" src="assets/photos/fog-blur.jpg" alt="" loading="lazy" />
+  <img data-f="fog-forest" src="assets/photos/fog-forest.jpg" alt="" loading="lazy" />
+  <img data-f="frost-glass" src="assets/photos/frost-glass.jpg" alt="" loading="lazy" />
+  <img data-f="jellyfish" src="assets/photos/jellyfish.jpg" alt="" loading="lazy" />
+  <img data-f="field-sunset" src="assets/photos/field-sunset.jpg" alt="" loading="lazy" />
+  <img data-f="field-cow" src="assets/photos/field-cow.jpg" alt="" loading="lazy" />
+  <img data-f="green-head-bridge" src="assets/photos/green-head-bridge.jpg" alt="" loading="lazy" />
+  <img data-f="green-heads-door" src="assets/photos/green-heads-door.jpg" alt="" loading="lazy" />
+  <img data-f="koi-reflection" src="assets/photos/koi-reflection.jpg" alt="" loading="lazy" />
+  <img data-f="tide-sailboat" src="assets/photos/tide-sailboat.jpg" alt="" loading="lazy" />
+  <img data-f="tide-cliff-cove" src="assets/photos/tide-cliff-cove.jpg" alt="" loading="lazy" />
+  <img data-f="tide-sea-cave" src="assets/photos/tide-sea-cave.jpg" alt="" loading="lazy" />
+  <img data-f="tide-rock-spray" src="assets/photos/tide-rock-spray.jpg" alt="" loading="lazy" />
+  <img data-f="sunset-fire-clouds" src="assets/photos/sunset-fire-clouds.jpg" alt="" loading="lazy" />
+  <img data-f="sunset-rays" src="assets/photos/sunset-rays.jpg" alt="" loading="lazy" />
+  <img data-f="dusk-bay-eucalyptus" src="assets/photos/dusk-bay-eucalyptus.jpg" alt="" loading="lazy" />
+  <img data-f="woods-graffiti" src="assets/photos/woods-graffiti.jpg" alt="" loading="lazy" />
+  <img data-f="prints-chihuahua" src="assets/photos/prints-chihuahua.jpg" alt="" loading="lazy" />
+  <img data-f="prints-marlboro" src="assets/photos/prints-marlboro.jpg" alt="" loading="lazy" />
+  <img data-f="prints-stereo" src="assets/photos/prints-stereo.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-carpet-live" src="assets/photos/pomegranate-carpet-live.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-hand-live" src="assets/photos/pomegranate-hand-live.jpg" alt="" loading="lazy" />
+  <img data-f="pomegranate-gold-live" src="assets/photos/pomegranate-gold-live.jpg" alt="" loading="lazy" />
+  <img data-f="palm-drawing-live" src="assets/photos/palm-drawing-live.jpg" alt="" loading="lazy" />
+  <img data-f="circuit-clips-live" src="assets/photos/circuit-clips-live.jpg" alt="" loading="lazy" />
+  <img data-f="magazine-live" src="assets/photos/magazine-live.jpg" alt="" loading="lazy" />
+  <img data-f="star-pillows-live" src="assets/photos/star-pillows-live.jpg" alt="" loading="lazy" />
   <!-- live clips: animated webp, loop forever, no audio -->
-  <img data-w="pomegranate-carpet-live" src="assets/pomegranate-carpet-live.webp" alt="" loading="lazy" decoding="async" />
-  <img data-w="pomegranate-hand-live" src="assets/pomegranate-hand-live.webp" alt="" loading="lazy" decoding="async" />
-  <img data-w="pomegranate-gold-live" src="assets/pomegranate-gold-live.webp" alt="" loading="lazy" decoding="async" />
-  <img data-w="palm-drawing-live" src="assets/palm-drawing-live.webp" alt="" loading="lazy" decoding="async" />
-  <img data-w="circuit-clips-live" src="assets/circuit-clips-live.webp" alt="" loading="lazy" decoding="async" />
-  <img data-w="magazine-live" src="assets/magazine-live.webp" alt="" loading="lazy" decoding="async" />
-  <img data-w="star-pillows-live" src="assets/star-pillows-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="pomegranate-carpet-live" src="assets/motion/pomegranate-carpet-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="pomegranate-hand-live" src="assets/motion/pomegranate-hand-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="pomegranate-gold-live" src="assets/motion/pomegranate-gold-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="palm-drawing-live" src="assets/motion/palm-drawing-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="circuit-clips-live" src="assets/motion/circuit-clips-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="magazine-live" src="assets/motion/magazine-live.webp" alt="" loading="lazy" decoding="async" />
+  <img data-w="star-pillows-live" src="assets/motion/star-pillows-live.webp" alt="" loading="lazy" decoding="async" />
 </div>
 <!-- ventures images: kept out of #pool so the intro, sphere and deck never use them -->
 <div id="vpool" hidden>
-  <img data-v="miasma-title-screen" src="assets/miasma-title-screen.jpg" alt="" loading="lazy" />
-  <img data-v="miasma-campus-site" src="assets/miasma-campus-site.jpg" alt="" loading="lazy" />
-  <img data-v="miasma-trailer-poster" src="assets/miasma-trailer-poster.jpg" alt="" loading="lazy" />
+  <img data-v="miasma-title-screen" src="assets/tech/miasma-title-screen.jpg" alt="" loading="lazy" />
+  <img data-v="miasma-campus-site" src="assets/tech/miasma-campus-site.jpg" alt="" loading="lazy" />
+  <img data-v="miasma-trailer-poster" src="assets/tech/miasma-trailer-poster.jpg" alt="" loading="lazy" />
+  <img data-v="candle-game" src="assets/tech/candle-game.gif" alt="" loading="lazy" />
+  <img data-v="do-you-remember" src="assets/tech/do-you-remember.gif" alt="" loading="lazy" />
+  <img data-v="radar-card" src="assets/tech/radar-card.jpg" alt="" loading="lazy" />
 </div>
 
 <script>
-const IMG_BASE = 'assets/';
+const IMG_BASE = 'assets/photos/';
 
 // add new photos here
 const SERIES = [
   // objects -> body -> self; the face-visible photo is last on purpose
-  { slug: 'on-silence', name: 'On Silence', category: 'Self-portrait & Still Life', layout: 'wall',
+  { slug: 'on-silence', cover: 'pomegranate-carpet', name: 'On Silence', category: 'Self-portrait & Still Life', layout: 'wall',
     exhibited: 'Mish Mash, Berkeley · April 2026', photos: [
     /* in wall order (= lightbox order); clip: the same shot as an animated webp, the still is its poster */
     { file: 'pomegranate-dagger', w: 1800, h: 1266 },
@@ -528,53 +607,53 @@ const SERIES = [
     { file: 'red-dress-script', w: 1201, h: 1800, alt: 'Portrait behind a white star pattern' },
     { file: 'pomegranate-scissors', w: 1800, h: 1200 },
     { file: 'pomegranate-gold', clip: 'pomegranate-gold-live', w: 1800, h: 1200 } ] },
-  { slug: 'gold-thread', name: 'Gold Thread', category: 'Textile', photos: [
+  { slug: 'gold-thread', cover: 'gold-thread-coins', name: 'Gold Thread', category: 'Textile', photos: [
     { file: 'gold-thread-sway', w: 1800, h: 1200 }, { file: 'gold-thread-coins', w: 1800, h: 1200 },
-    { file: 'gold-thread-shade', w: 1800, h: 1200 }, { file: 'rug-flat', w: 1003, h: 1504 } ] },
-  { slug: 'moss', name: 'Moss & Still Water', category: 'Landscape', photos: [
+    { file: 'gold-thread-shade', w: 1800, h: 1200 } ] },
+  { slug: 'moss', cover: 'garden-pagoda-reflection', name: 'Moss & Still Water', category: 'Landscape', photos: [
     { file: 'garden-moss-boulders', w: 1200, h: 1800 }, { file: 'garden-pagoda-reflection', w: 1350, h: 1800 },
     { file: 'garden-moss-trunk', w: 1200, h: 1800 }, { file: 'garden-stone-lantern', w: 1800, h: 1200 },
     { file: 'garden-lily-pond', w: 1200, h: 1800 }, { file: 'garden-lantern-maples', w: 1200, h: 1800 },
     { file: 'garden-pond-reflection', w: 1200, h: 1800 } ] },
-  { slug: 'fog', name: 'Fog Line', category: 'Landscape', film: true, photos: [
+  { slug: 'fog', cover: 'fog-sign', name: 'Fog Line', category: 'Landscape', film: true, photos: [
     { file: 'fog-path', w: 1800, h: 1350 }, { file: 'fog-oak', w: 1800, h: 1350 },
     { file: 'fog-sign', w: 1800, h: 1350 }, { file: 'fog-clover', w: 1800, h: 1350 },
     { file: 'fog-blur', w: 1800, h: 1350 }, { file: 'fog-forest', w: 1800, h: 1350 },
     { file: 'frost-glass', w: 1800, h: 1350 } ] },
-  { slug: 'paper-sky', name: 'Paper Sky', category: 'Installation', photos: [
+  { slug: 'paper-sky', cover: 'paper-sky-color', name: 'Paper Sky', category: 'Installation', photos: [
     { file: 'paper-sky-room', w: 1200, h: 1800 }, { file: 'paper-sky-wave', w: 1200, h: 1800 },
     { file: 'paper-sky-color', w: 1200, h: 1800 } ] },
-  { slug: 'unraveling', name: 'Unraveling', category: 'Installation', photos: [
+  { slug: 'unraveling', cover: 'unraveling-carpet-melt', name: 'Unraveling', category: 'Installation', photos: [
     { file: 'unraveling-carpet-tall', w: 1080, h: 1620 }, { file: 'unraveling-carpet-melt', w: 1620, h: 1080 },
     { file: 'unraveling-red-wall', w: 1620, h: 1080 } ] },
-  { slug: 'below-the-surface', name: 'Below the Surface', category: 'Aquatic', photos: [
+  { slug: 'below-the-surface', cover: 'surface-aquarium', name: 'Below the Surface', category: 'Aquatic', photos: [
     { file: 'surface-aquarium', w: 1620, h: 1040 }, { file: 'surface-alligator', w: 1080, h: 1620 },
     { file: 'koi-reflection', w: 1080, h: 1620 }, { file: 'surface-koi', w: 1800, h: 1200 },
     { file: 'jellyfish', w: 1800, h: 1350 } ] },
-  { slug: 'tide', name: 'Tide', category: 'Seascape', film: false, photos: [
+  { slug: 'tide', cover: 'tide-sea-cave', name: 'Tide', category: 'Seascape', film: false, photos: [
     { file: 'tide-blue', w: 1200, h: 1800 }, { file: 'tide-rocks', w: 1200, h: 1800 },
     { file: 'tide-dark', w: 1800, h: 896 }, { file: 'tide-sailboat', w: 1080, h: 1620 },
     { file: 'tide-cliff-cove', w: 1080, h: 1620 }, { file: 'tide-sea-cave', w: 1080, h: 1620 },
     { file: 'tide-rock-spray', w: 1080, h: 1620 } ] },
-  { slug: 'golden-hour', name: 'Golden Hour', category: 'Seascape', film: true, photos: [
+  { slug: 'golden-hour', cover: 'sunset-beach', name: 'Golden Hour', category: 'Seascape', film: true, photos: [
     { file: 'sunset-figures', w: 1800, h: 1200 }, { file: 'sunset-waves', w: 1800, h: 1200 },
     { file: 'sunset-vertical', w: 1200, h: 1800 }, { file: 'sunset-beach', w: 1200, h: 1800 },
     { file: 'field-sunset', w: 1800, h: 1350 }, { file: 'field-cow', w: 1350, h: 1800 },
     { file: 'sunset-fire-clouds', w: 1620, h: 1080 }, { file: 'sunset-rays', w: 1620, h: 1080 },
     { file: 'dusk-bay-eucalyptus', w: 1200, h: 1800 } ] },
-  { slug: 'streets', name: 'Streets', category: 'Street', film: false, photos: [
+  { slug: 'streets', cover: 'streets-stickers', name: 'Streets', category: 'Street', film: false, photos: [
     { file: 'streets-harbor', w: 1080, h: 1620 }, { file: 'streets-stickers', w: 1200, h: 1800 },
     { file: 'streets-posters', w: 1800, h: 1200 }, { file: 'graffiti', w: 1800, h: 1200 },
     { file: 'woods-graffiti', w: 1080, h: 1620 } ] },
-  { slug: 'after-dark', name: 'After Dark', category: 'Night', photos: [
+  { slug: 'after-dark', cover: 'after-dark-neon', name: 'After Dark', category: 'Night', photos: [
     { file: 'night-city-blur', w: 1200, h: 1800 },
     { file: 'after-dark-neon', w: 1620, h: 1080 }, { file: 'after-dark-lights', w: 1620, h: 1080 } ] },
-  { slug: 'green-heads', name: 'Green Heads', category: 'Portrait', film: true, noHead: true, photos: [
+  { slug: 'green-heads', cover: 'green-head-bridge', name: 'Green Heads', category: 'Portrait', film: true, noHead: true, photos: [
     { file: 'green-head-bridge', w: 1800, h: 1350 }, { file: 'green-heads-door', w: 1800, h: 1350 } ] },
-  { slug: 'print-room', name: 'Print Room', category: 'Printmaking', photos: [
-    { file: 'prints-chihuahua', w: 1350, h: 1800 }, { file: 'prints-marlboro', w: 1350, h: 1800 },
-    { file: 'prints-stereo', w: 1350, h: 1800 } ] },
-  { slug: 'small-things', name: 'Small Things', category: 'Motion', photos: [
+  { slug: 'print-room', cover: 'prints-chihuahua', name: 'Print Room', category: 'Printmaking', photos: [
+    { file: 'prints-chihuahua', w: 1350, h: 1800 }, { file: 'prints-stereo', w: 1350, h: 1800 },
+    { file: 'prints-marlboro', w: 1350, h: 1800 } ] },
+  { slug: 'small-things', cover: 'star-pillows-live', name: 'Small Things', category: 'Motion', photos: [
     { file: 'circuit-clips-live', live: true, w: 1280, h: 970 },
     { file: 'palm-drawing-live', live: true, w: 1280, h: 960, alt: 'Palm Drawing: henna drawn on a hand' },
     { file: 'magazine-live', live: true, w: 1280, h: 854 },
@@ -586,7 +665,7 @@ const SPHERE_ORDER = [
   'unraveling-carpet-tall', 'after-dark-lights', 'pomegranate-carpet-live', 'unraveling-red-wall', 'pomegranate-carpet',
   'palm-drawing-live', 'pomegranate-hand-live', 'star-collage', 'pomegranate-palm', 'pomegranate-open',
   'pomegranate-scissors', 'pomegranate-dagger', 'pomegranate-gold-live', 'sunset-fire-clouds', 'streets-posters', 'unraveling-carpet-melt',
-  'pomegranate-gold', 'sunset-rays', 'red-dress-script', 'graffiti', 'rug-flat', 'gold-thread-shade', 'gold-thread-coins',
+  'pomegranate-gold', 'sunset-rays', 'red-dress-script', 'graffiti', 'gold-thread-shade', 'gold-thread-coins',
   'paper-sky-room', 'paper-sky-wave', 'paper-sky-color', 'gold-thread-sway', 'sunset-vertical',
   'night-city-blur', 'sunset-figures', 'sunset-waves', 'magazine-live',
   'sunset-beach', 'green-heads-door', 'green-head-bridge', 'garden-pagoda-reflection', 'garden-lantern-maples',
@@ -605,7 +684,7 @@ document.querySelectorAll('#pool img[data-f]').forEach((i) => (pool[i.dataset.f]
 const src = (f) => pool[f] || IMG_BASE + f + '.jpg';
 const poolW = {};
 document.querySelectorAll('#pool img[data-w]').forEach((i) => (poolW[i.dataset.w] = i.getAttribute('src')));
-const wsrc = (f) => poolW[f] || IMG_BASE + f + '.webp';
+const wsrc = (f) => poolW[f] || 'assets/motion/' + f + '.webp';
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* live clips play as animated webp; reduced motion gets the still jpg */
 const isLive = (p) => !!((p.live || p.clip) && !RM);
@@ -647,7 +726,7 @@ const seriesList = () => `<ol class="list">${SERIES.map((s, i) => `<li><a href="
 const MENU = [
   ['index', '#/index', 'every photo'],
   ['series', '#/series', `${SERIES.length} series`],
-  ['ventures', '#/ventures', 'games &amp; apps'],
+  ['tech', '#/tech', 'games &amp; apps'],
   ['about', '#/about', 'the person'],
 ];
 function home() {
@@ -656,20 +735,32 @@ function home() {
       ${SHOW_HOME_SERIES_LIST ? '<h2>Hasina Esteqlal</h2>' : ''}</section>
     ${SHOW_HOME_SERIES_LIST ? seriesList() : `<nav class="x-menu" aria-label="Sections">
       <ol>${MENU.map(([w, h, c], i) => `<li><a href="${h}"><span class="x-menu__w">${w}<span class="x-menu__n">${pad(i + 1)}</span></span><span class="x-menu__c">${c}</span></a></li>`).join('')}</ol>
-      <a class="x-menu__ig" href="https://www.instagram.com/555amclouds/" target="_blank" rel="noopener">instagram</a>
+      <a class="x-menu__ig" href="https://www.instagram.com/555amclouds/" target="_blank" rel="noopener">instagram</a><span class="x-menu__dot" aria-hidden="true">·</span><a class="x-menu__ig" href="mailto:hasinaesteq@gmail.com">email</a>
     </nav>`}
   </div>`;
 }
+const SERIES_LIST_STYLE = 'grid'; // 'grid' = cover-image grid; 'rows' = the old numbered list
+/* cover tile image: the series' own photo; a live photo plays as its animated webp (still jpg under reduced motion) */
+const coverSrc = (s) => {
+  const p = s.photos.find((x) => x.file === s.cover) || s.photos[0];
+  return p.live ? `src="${msrc(p)}"${fb(p)}` : `src="${src(p.file)}"`;
+};
+const seriesGrid = () => `<ul class="x-sg">${SERIES.map((s) => `<li><a href="#/series/${s.slug}">
+      <span class="x-sg__img"><img ${coverSrc(s)} alt="${esc(s.name)}: cover photo" loading="lazy" decoding="async" /></span>
+      <span class="x-sg__name">${esc(s.name)}</span>
+      <span class="x-sg__meta">${esc(s.category)} | ${pad(s.photos.length)} photos${s.exhibited ? ' | Exhibited' : ''}</span></a></li>`).join('')}</ul>`;
 function seriesPage() {
+  if (SERIES_LIST_STYLE === 'grid') return `<div class="view x-sg-view">
+    <section class="x-sg-head"><h2>Series</h2></section>
+    ${seriesGrid()}
+  </div>`;
   return `<div class="view">
     <section class="x-sl-head"><h2>Hasina Esteqlal</h2></section>
     ${seriesList()}
   </div>`;
 }
 
-const note = (c, t) => `<span class="x-note ${c}" aria-hidden="true">${t}<svg viewBox="0 0 34 26" fill="none" stroke="currentColor"
-  stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3c10-2 16 4 11 9s-2 10 12 11M20 20l6 3-5 3"/></svg></span>`;
-const media = (s, p, n) => `<button type="button" data-n="${n}" style="aspect-ratio:${p.w}/${p.h}"
+const media = (s, p, n) => `<button type="button" data-n="${n}" style="aspect-ratio:${p.w}/${p.h};--ar:${(p.w / p.h).toFixed(4)}"
       aria-label="Open ${esc(s.name)} ${p.live ? 'clip' : 'photo'} ${n + 1} of ${s.photos.length}"><img src="${msrc(p)}"${fb(p)} width="${p.w}" height="${p.h}" loading="lazy" decoding="async" alt="${p.alt ? esc(p.alt) : `${esc(s.name)}, ${p.live ? 'clip' : 'photo'} ${n + 1}`}" /></button>`;
 /* exhibition wall: puzzle rows of tiles, then the title block and statement */
 const statement = (s) => `<aside class="x-stm" aria-label="Artist statement"><div class="x-stm__sh">
@@ -733,10 +824,7 @@ function series(s) {
       <p class="label">${pad(i + 1)} / ${pad(SERIES.length)} · ${esc(s.category)} · ${s.photos.length} photos</p></div>`}
     <div class="row${s.film ? '' : ' is-clean'}" id="row">${s.film ? `<div class="x-film">
       <div class="x-can" aria-hidden="true"><i></i><div><b>200</b><small>${esc(s.name)}</small><em>24 exp</em></div><i></i></div>
-      <div class="x-strip">${s.photos.map((p, n) => `<div class="x-fr">${n === 0 ? note('up', 'swipe left -&gt;') : ''}${
-        n === 0 || (n > 1 && n % 2 === 0) ? note('dn' + (n > 2 ? ' opt' : ''), 'no. ' + (n + 1)) : ''}${
-        n % 2 ? note('up' + (n > 2 ? ' opt' : ''), n === 1 ? esc(s.category.toLowerCase()) : 'no. ' + (n + 1)) : ''}
-        ${media(s, p, n)}</div>`).join('')}</div>
+      <div class="x-strip">${s.photos.map((p, n) => `<div class="x-fr">${media(s, p, n)}</div>`).join('')}</div>
       <a class="next" href="#/series/${nx.slug}">next series -&gt;</a></div>` : `<div class="x-clean">
       ${s.photos.map((p, n) => `<div class="x-cf">${media(s, p, n)}</div>`).join('')}
       <a class="next" href="#/series/${nx.slug}">next series -&gt;</a></div>`}</div>
@@ -799,26 +887,77 @@ const VENTURES = [
       { file: 'miasma-campus-site', w: 1800, h: 1013, alt: "Markus's Miasma in-game menu styled as a fake university website" },
     ],
   },
+  {
+    title: 'Radar',
+    year: 'April 2026 to present',
+    kind: 'Dating app · in development',
+    desc: 'Radar finds the people you keep crossing paths with in real life, on the train, in line for coffee, and only tells you when the feeling is mutual. No swiping, no guessing, no rejection.',
+    role: 'Role: COO and co-founder.',
+    links: [
+      { label: 'findmyradar.com', href: 'https://www.findmyradar.com/' },
+      { label: 'Instagram', href: 'https://instagram.com/meetradar' },
+    ],
+    images: [{ file: 'radar-card', w: 1200, h: 560, alt: 'Radar logo card' }],
+  },
+  {
+    title: 'Do You Remember?',
+    compact: true,
+    year: '2025',
+    kind: 'Narrative game · Twine',
+    desc: 'A branching narrative where you revisit and erase painful memories, and find that rewriting the past does not always make the present better.',
+    role: 'Role: Writing and game design.',
+    links: [
+      { label: 'Play on itch.io', href: 'https://5amclouds.itch.io/do-you-remember' },
+    ],
+    images: [{ file: 'do-you-remember', ext: 'gif', w: 400, h: 214, alt: 'Do You Remember? gameplay' }],
+  },
+  {
+    title: 'Horror Candle Game',
+    compact: true,
+    year: '2024',
+    kind: 'Game prototype · Unity',
+    desc: 'A horror prototype built around a glitching candle: navigate dark mazes, evade a monster and solve puzzles while your only light flickers out.',
+    role: 'Role: Game design and development.',
+    links: [
+      { label: 'Watch gameplay', href: 'https://www.youtube.com/watch?v=2w07kfHzJTQ' },
+    ],
+    images: [{ file: 'candle-game', ext: 'gif', w: 400, h: 218, alt: 'Horror Candle Game gameplay: a flickering candle lights a dark maze' }],
+  },
 ];
 const vpool = {};
 document.querySelectorAll('#vpool img[data-v]').forEach((i) => (vpool[i.dataset.v] = i.getAttribute('src')));
-const vsrc = (f) => vpool[f] || IMG_BASE + f + '.jpg';
+const vsrc = (f, ext) => vpool[f] || 'assets/tech/' + f + '.' + (ext || 'jpg');
 const ytFrame = (v, auto) => `<iframe class="x-vl__yt" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.youtube)}${auto ? '?autoplay=1' : ''}" title="${esc(v.title)} trailer" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen${auto ? '' : ' loading="lazy"'} referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
 function ventures() {
   return `<div class="view"><div class="x-vn">
-    <div class="s-head"><h1>Ventures</h1><p class="label">Games and apps I've built, from studio to prototype.</p></div>
-    <ol class="x-vl">${VENTURES.map((v, i) => `<li>
-      <div class="x-vl__top"><span class="label">${pad(i + 1)}</span>
+    <div class="s-head"><h1>Tech</h1><p class="label">Games and apps I've built, from studio to prototype.</p></div>
+    <ol class="x-vl">${vrows().map((r) => r.length > 1 ? `<li><div class="x-vl__pair">${r.map((i) => ventry(i)).join('')}</div></li>` : `<li>${ventry(r[0])}</li>`).join('')}</ol>
+  </div></div>`;
+}
+/* rows: consecutive compact entries pair up two per row; others get a row each */
+function vrows() {
+  const rows = [];
+  VENTURES.forEach((v, i) => {
+    const last = rows[rows.length - 1];
+    if (v.compact && last && last.length === 1 && VENTURES[last[0]].compact) last.push(i);
+    else rows.push([i]);
+  });
+  return rows;
+}
+function ventry(i) {
+  const v = VENTURES[i];
+  const c = !!v.compact;
+  return `${c ? `<article class="x-vl__card"><div class="x-vl__ct"><span class="label">${pad(i + 1)}</span><span class="label">${esc(v.year)}</span></div>
+        <h2>${esc(v.title)}<span class="list__cat">${esc(v.kind)}</span></h2>` : `<div class="x-vl__top"><span class="label">${pad(i + 1)}</span>
         <h2>${esc(v.title)}<span class="list__cat">${esc(v.kind)}</span></h2>
-        <span class="label">${esc(v.year)}</span></div>
+        <span class="label">${esc(v.year)}</span></div>`}
       <div class="x-vl__body">
         ${v.desc ? `<p class="x-vl__desc">${esc(v.desc)}</p>` : ''}
         <div class="x-vl__meta">${v.released ? `<p>${esc(v.released)}</p>` : ''}${v.role ? `<p>${esc(v.role)}</p>` : ''}${v.credits ? `<p>${esc(v.credits)}</p>` : ''}</div>
         ${v.links && v.links.length ? `<p class="x-vl__links">${v.links.map((l) => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</p>` : ''}
         ${v.youtube ? (v.poster ? `<button type="button" class="x-vl__po" data-yt="${i}" aria-label="Play ${esc(v.title)} trailer"><img src="${vsrc(v.poster)}" width="1280" height="720" alt="" loading="lazy" decoding="async" /><span class="x-vl__play" aria-hidden="true"></span><span class="x-vl__tag" aria-hidden="true">trailer</span></button>` : ytFrame(v)) : ''}
-        ${v.images && v.images.length ? `<div class="x-vl__imgs">${v.images.map((p, n) => `<button type="button" data-v="${i}" data-n="${n}" style="--r:${(p.w / p.h).toFixed(4)}" aria-label="Open image: ${esc(p.alt)}"><img src="${vsrc(p.file)}"${p.pixel ? ' class="is-px"' : ''} width="${p.w}" height="${p.h}" alt="${esc(p.alt)}" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
-      </div></li>`).join('')}</ol>
-  </div></div>`;
+        ${v.images && v.images.length ? `<div class="x-vl__imgs${!c && v.images.length === 1 && v.images[0].ext === 'gif' ? ' x-vl__imgs--gif' : ''}">${v.images.map((p, n) => `<button type="button" data-v="${i}" data-n="${n}" style="--r:${(p.w / p.h).toFixed(4)}" aria-label="Open image: ${esc(p.alt)}"><img src="${vsrc(p.file, p.ext)}"${p.pixel ? ' class="is-px"' : ''} width="${p.w}" height="${p.h}" alt="${esc(p.alt)}" loading="lazy" decoding="async" /></button>`).join('')}</div>` : ''}
+      </div>${c ? '</article>' : ''}`;
 }
 function bindVentures() {
   $('.x-vl').addEventListener('click', (e) => {
@@ -989,12 +1128,12 @@ function route() {
   if (m && SERIES.find((s) => s.slug === m[1])) { current = SERIES.find((s) => s.slug === m[1]); html = series(current); key = 'series'; }
   else if (/^\/series\/?$/.test(h)) { html = seriesPage(); key = 'series'; }
   else if (h.startsWith('/about')) { html = about(); key = 'about'; }
-  else if (h.startsWith('/ventures')) { html = ventures(); key = 'ventures'; }
+  else if (h.startsWith('/tech') || h.startsWith('/ventures')) { html = ventures(); key = 'tech'; }
   else if (h.startsWith('/index')) { html = deck(); key = 'index'; }
   else html = home();
   document.querySelectorAll('.hd nav a[data-r]').forEach((a) =>
     a.dataset.r === key ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  document.title = (current ? current.name + ' · ' : key === 'about' ? 'About · ' : key === 'series' ? 'Series · ' : key === 'ventures' ? 'Ventures · ' : key === 'index' ? 'Index · ' : '') + 'Hasina Esteqlal | Photography Archive';
+  document.title = (current ? current.name + ' · ' : key === 'about' ? 'About · ' : key === 'series' ? 'Series · ' : key === 'tech' ? 'Tech · ' : key === 'index' ? 'Index · ' : '') + 'Hasina Esteqlal | Photography Archive';
   app.classList.add('is-out');
   setTimeout(() => {
     stopSphere(); stopWall();
@@ -1004,7 +1143,7 @@ function route() {
     if (key === 'home') stopSphere = initSphere();
     if (key === 'index') stopSphere = initDeck();
     if (key === 'about') bindAbout();
-    if (key === 'ventures') bindVentures();
+    if (key === 'tech') bindVentures();
     requestAnimationFrame(() => app.classList.remove('is-out'));
   }, 180);
 }
@@ -1103,7 +1242,7 @@ function show(n) {
   const p = ph[idx];
   if (!lbImgIn) { $('#lb-fig').prepend(lbImg); lbImgIn = true; }
   if (isLive(p)) lbImg.dataset.fb = p.file; else delete lbImg.dataset.fb;
-  lbImg.src = set.venture ? vsrc(p.file) : msrc(p);
+  lbImg.src = set.venture ? vsrc(p.file, p.ext) : msrc(p);
   lbImg.classList.toggle('is-px', !!p.pixel);
   lbImg.alt = p.alt || `${set.name}, ${p.live ? 'clip' : 'photo'} ${idx + 1}`;
   lbCap.textContent = `${set.name} ${idx + 1}/${N}`;
